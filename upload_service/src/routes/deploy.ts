@@ -10,8 +10,11 @@ router.post("/" , async (req:Request,res:Response):Promise<void>=>{
         console.log(repoUrl)
         const id = generateId();
         await git().clone(repoUrl , `./output/${id}`)
+        res.status(200).json({id});
     }
-    res.json({});
+    else{
+        res.status(400).json({error:"No repo URL"})
+    }
 })
 
 export default router;
