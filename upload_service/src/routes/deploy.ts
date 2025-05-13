@@ -15,10 +15,10 @@ router.post("/", async (req: Request, res: Response): Promise<void> => {
         try {
 
             const id = generateId();
-            // await git().clone(repoUrl, path.join(__dirname, `./output/${id}`))
-            // const files = getAllFiles(path.join(__dirname, `./output/${id}`));
-            // uploadFiles(files);
-            await publisher.lPush('build_queue', "anIYnCay");
+            await git().clone(repoUrl, path.join(__dirname, `./output/${id}`))
+            const files = getAllFiles(path.join(__dirname, `./output/${id}`));
+            uploadFiles(files);
+            await publisher.lPush('build_queue', id);
 
             res.status(200).json({ id });
 
