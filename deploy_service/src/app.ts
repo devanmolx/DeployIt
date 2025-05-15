@@ -9,8 +9,8 @@ async function main() {
 
             const result = await subscriber.brPop("build_queue", 0)
             if (result) {
-                const id = result.element;
-                await downloadS3Folder(id);
+                const { id, gitRepoUrl } = await JSON.parse(result.element);
+                await downloadS3Folder(id, gitRepoUrl);
                 await buildProject(id);
                 await uploadProject(id);
             }
