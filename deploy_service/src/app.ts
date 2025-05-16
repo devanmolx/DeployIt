@@ -1,5 +1,5 @@
 import { buildProject } from "./utils/buildApp";
-import { downloadS3Folder } from "./utils/downloadS3Folder";
+import { downloadgitRepo } from "./utils/downloadgitRepo";
 import subscriber from "./utils/redis";
 import { uploadProject } from "./utils/uploadProject";
 
@@ -10,7 +10,7 @@ async function main() {
             const result = await subscriber.brPop("build_queue", 0)
             if (result) {
                 const { id, gitRepoUrl } = await JSON.parse(result.element);
-                await downloadS3Folder(id, gitRepoUrl);
+                await downloadgitRepo(id, gitRepoUrl);
                 await buildProject(id);
                 await uploadProject(id);
             }

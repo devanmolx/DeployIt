@@ -1,4 +1,4 @@
-import { spawn } from "child_process"
+import Docker from "dockerode"
 import path from "path"
 
 export const buildProject = async (id: string) => {
@@ -7,31 +7,39 @@ export const buildProject = async (id: string) => {
 
         const projectPath = path.join(__dirname, "..", "..", "downloads", id);
 
-        const command = `cd "${projectPath}" && npm install && npm run build`;
+        const docker = new Docker();
 
-        return new Promise<void>((resolve, reject) => {
-            const child = spawn(command, { shell: true });
-
-            child.stdout.on("data", (data) => {
-                console.log(`stdout:\n${data}`);
-            });
-
-            child.stderr.on("data", (data) => {
-                console.error(`stderr:\n${data}`);
-            });
-
-            child.on("close", (code) => {
-                console.log(`build process exited with code ${code}`);
-                if (code === 0) {
-                    resolve();
-                } else {
-                    reject(new Error(`Build process exited with code ${code}`));
-                }
-
-            });
+        const container = await docker.createContainer({
+            Image: "node:20-alpine",
+            Cmd: ['sh', '-c', 'npm install && npm run build'],
+            Tty: true,
+            WorkingDir: "/app",
+            HostConfig: {
+                Binds: [`${projectPath}:/app`]
+            }
         })
 
-    } catch (error) {
+        await container.start();
+        console.log('🚀 Container started. Building...');
+
+        const stream = await container.logs({
+            follow: true,
+            stderr: true,
+            stdout: true
+        })
+
+        stream.on('data', chunk => {
+            process.stdout.write(chunk.toString());
+        });
+
+        await container.wait();
+        console.log('✅ Build finished.');
+
+        await container.remove();
+        console.log('🧹 Container removed.');
+
+    }
+    catch (error) {
         console.log(error);
     }
 }
