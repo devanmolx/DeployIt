@@ -12,10 +12,10 @@ export async function GET(request: Request) {
             path = "/index.html"
         }
 
-        const Key = `/project/${projectId}/${path}`;
+        const Key = `project/${projectId}${path}`;
 
         const params = {
-            Bucket: "vercel",
+            Bucket: "vercel.anmolgarg.dev",
             Key
         }
 
@@ -27,6 +27,7 @@ export async function GET(request: Request) {
             return new NextResponse(data.Body as Buffer, {
                 headers: {
                     'Content-Type': contentType,
+                    'Cache-Control': 'public, max-age=3600'
                 },
             })
         }
@@ -35,7 +36,19 @@ export async function GET(request: Request) {
         console.error("S3 error:", error);
 
         if (error.code === 'NoSuchKey') {
-            return NextResponse.json({ error: 'File not found' }, { status: 404 });
+            const fallbackKey = `project/404.html`;
+            try {
+                const fallback = await s3.getObject({ Bucket: "vercel.anmolgarg.dev", Key: fallbackKey }).promise();
+                return new NextResponse(fallback.Body as Buffer, {
+                    status: 404,
+                    headers: {
+                        'Content-Type': 'text/html',
+                    },
+                });
+            } catch {
+                return NextResponse.json({ error: 'File not found' }, { status: 404 });
+            }
+
         }
 
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

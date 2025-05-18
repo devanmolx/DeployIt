@@ -11,10 +11,10 @@ export const uploadFiles = (files: string[], id: string) => {
 
     files.forEach(async (file) => {
         const fileContent = fs.readFileSync(file);
-        const filepath = path.join(`/project/${id.toLowerCase()}`, extractPath(file));
+        const filepath = path.join(`project/${id.toLowerCase()}`, extractPath(file));
         console.log(filepath)
         const params = {
-            Bucket: "vercel",
+            Bucket: "vercel.anmolgarg.dev",
             Key: filepath,
             Body: fileContent
         }
