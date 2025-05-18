@@ -5,7 +5,7 @@ export function middleware(request: NextRequest) {
     const hostname = request.headers.get("host") || "";
     const parts = hostname.split('.')
 
-    if (parts.length > 1 && parts[0] !== 'www' && parts[0] !== 'localhost') {
+    if (parts.length > 3 && parts[0] !== 'www' && parts[0] !== 'deployit') {
         const projectId = parts[0];
         const path = request.nextUrl.pathname
 
