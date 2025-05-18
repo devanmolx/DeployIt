@@ -8,12 +8,12 @@ app.use(cors());
 app.use(express.json());
 dotenv.config();
 
-app.use("/deploy" , deployRoute)
+app.use("/deploy", deployRoute)
 
-app.get("/" , (req:Request,res:Response):void=>{
-    res.json({msg:"Server running"})
+app.get("/", (req: Request, res: Response): void => {
+    res.json({ msg: "Server running" })
 })
 
-app.listen(3000 , ()=>{
+app.listen(4000, () => {
     console.log("Server Started")
 })
