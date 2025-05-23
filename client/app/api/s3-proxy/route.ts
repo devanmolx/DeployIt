@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import mime from 'mime'
-import s3 from '@/app/utils/s3'
+import s3 from '@/utils/s3';
 
 export async function GET(request: Request) {
     try {
@@ -21,7 +21,7 @@ export async function GET(request: Request) {
 
         const data = await s3.getObject(params).promise();
 
-        if (data) {
+        if (data.Body) {
             const contentType = mime.getType(path || "") || 'application/octet-stream'
 
             return new NextResponse(data.Body as Buffer, {
@@ -30,6 +30,9 @@ export async function GET(request: Request) {
                     'Cache-Control': 'public, max-age=3600'
                 },
             })
+        }
+        else {
+            return NextResponse.json({ error: 'File not found' }, { status: 404 });
         }
 
     } catch (error: any) {
