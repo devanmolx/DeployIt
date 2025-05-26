@@ -1,11 +1,11 @@
 import Docker from "dockerode"
 import path from "path"
 
-export const buildProject = async (id: string) => {
+export const buildProject = async (slug: string) => {
 
     try {
 
-        const projectPath = path.join(__dirname, "..", "..", "downloads", id);
+        const projectPath = path.join(__dirname, "..", "..", "downloads", slug);
 
         const docker = new Docker();
 

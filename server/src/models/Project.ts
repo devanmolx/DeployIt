@@ -14,7 +14,6 @@ const projectSchema = new mongoose.Schema({
     gitRepoUrl: {
         type: String,
         required: true,
-        unique: true
     },
 }, { timestamps: true })
 

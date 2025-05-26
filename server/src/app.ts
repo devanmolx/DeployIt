@@ -1,6 +1,8 @@
 import express, { Request, Response } from "express";
 import cors from "cors"
 import deployRoute from "./routes/deploy"
+import projectRoute from "./routes/project"
+import userRoute from "./routes/user"
 import dotenv from "dotenv"
 import dbConnect from "./utils/dbConnect";
 
@@ -11,6 +13,8 @@ dotenv.config();
 dbConnect();
 
 app.use("/deploy", deployRoute)
+app.use("/project", projectRoute)
+app.use("/user", userRoute)
 
 app.get("/", (req: Request, res: Response): void => {
     res.json({ msg: "Server running" })
