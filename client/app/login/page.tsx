@@ -1,11 +1,34 @@
 "use client";
+import { getAuth, GithubAuthProvider, signInWithPopup } from "firebase/auth";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Github } from "lucide-react";
 import Link from "next/link";
+import app from "@/utils/firebase";
 
 export default function LoginPage() {
+
+  const auth = getAuth(app);
+  const provider = new GithubAuthProvider();
+  provider.addScope("repo");
+  provider.addScope("read:user");
+
+  async function signInWithGithub() {
+
+    const result = await signInWithPopup(auth, provider);
+    console.log(result)
+    const credential = GithubAuthProvider.credentialFromResult(result);
+    const token = credential?.accessToken;
+
+    const repos = await fetch("https://api.github.com/user/repos", {
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    }).then(res => res.json());
+
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
@@ -21,7 +44,7 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <Button variant="outline" className="w-full gap-2">
+            <Button onClick={signInWithGithub} variant="outline" className="w-full gap-2">
               <Github className="h-4 w-4" />
               Continue with GitHub
             </Button>
