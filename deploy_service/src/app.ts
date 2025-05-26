@@ -3,6 +3,9 @@ import { downloadgitRepo } from "./utils/downloadgitRepo";
 import subscriber from "./utils/redis";
 import { uploadProject } from "./utils/uploadProject";
 import {removeProject} from "./utils/removeProject"
+import dbConnect from "./utils/dbConnect";
+
+dbConnect();
 
 async function main() {
     while (true) {
@@ -10,9 +13,9 @@ async function main() {
 
             const result = await subscriber.brPop("build_queue", 0)
             if (result) {
-                const { slug, gitRepoUrl } = await JSON.parse(result.element);
+                const { deploymentId, slug, gitRepoUrl } = await JSON.parse(result.element);
                 await downloadgitRepo(slug, gitRepoUrl);
-                await buildProject(slug);
+                await buildProject(deploymentId , slug);
                 await uploadProject(slug);
                 await removeProject(slug);
             }

@@ -26,7 +26,7 @@ router.post("/", async (req, res) => {
             const deployment = await Deployment.create({ project: project._id })
             
             if (deployment) {
-                await publisher.lPush('build_queue', JSON.stringify({ slug, gitRepoUrl }));
+                await publisher.lPush('build_queue', JSON.stringify({ deploymentId:deployment._id, slug, gitRepoUrl }));
                 res.status(200).json({deployment ,status:true})
             }
             else {
