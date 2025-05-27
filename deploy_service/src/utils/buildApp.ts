@@ -1,26 +1,24 @@
 import Docker from "dockerode"
 import path from "path"
-import Deployment from "./deployment";
 import stripAnsi from "strip-ansi";
 
-export const buildProject = async (deploymentId: string, slug: string) => {
-
-    const deployment = await Deployment.findById(deploymentId);
-    if (deployment == null) {
-        return;
-    }
+export const buildProject = async (deployment: any, slug: string) => {
 
     let container;
     const projectPath = path.join(__dirname, "..", "..", "downloads", slug);
     const docker = new Docker();
 
     try {
-        
+
+        const uid = typeof process.getuid === 'function' ? process.getuid() : 1000;
+        const gid = typeof process.getgid === 'function' ? process.getgid() : 1000;
+
         container = await docker.createContainer({
             Image: "node:20-alpine",
             Cmd: ['sh', '-c', 'npm install && npm run build'],
             Tty: true,
             WorkingDir: "/app",
+            User: `${uid}:${gid}`,
             HostConfig: {
                 Binds: [`${projectPath}:/app`]
             }
@@ -44,13 +42,13 @@ export const buildProject = async (deploymentId: string, slug: string) => {
             logs.push(log);
             process.stdout.write(log + '\n');
         });
-        
+
 
         await new Promise((resolve, reject) => {
             stream.on("end", resolve);
             stream.on("error", reject);
         });
-      
+
 
         const result = await container.wait();
 
