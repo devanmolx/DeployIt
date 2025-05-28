@@ -5,7 +5,7 @@ import publisher from "../utils/redis";
 
 const router = Router();
 
-router.post("/", async (req, res) => {
+router.post("/new", async (req, res) => {
     const { userId, slug, gitRepoUrl } = req.body;
 
     let project;
@@ -23,7 +23,7 @@ router.post("/", async (req, res) => {
 
         if (project) {
 
-            const deployment = await Deployment.create({ project: project._id })
+            const deployment = await Deployment.create({ user:userId, project: project._id })
             
             if (deployment) {
                 await publisher.lPush('build_queue', JSON.stringify({ deploymentId:deployment._id, slug, gitRepoUrl }));
@@ -38,6 +38,25 @@ router.post("/", async (req, res) => {
     } catch (error) {
         console.log(error)
         res.status(500).json({ error, status: false })
+    }
+})
+
+router.post("/all", async (req, res) => {
+    const { userId } = req.body;
+
+    try {
+        
+        const projects = await Project.find({ user: userId });
+        
+        if (projects) {
+            res.status(200).json({projects, status: true});
+        }
+        else {
+            res.status(400).json({ error:"Unable to get projects", status: false });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error, status: false });
     }
 })
 

@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import cors from "cors"
-import deployRoute from "./routes/deploy"
+import deployRoute from "./routes/deployment"
 import projectRoute from "./routes/project"
 import userRoute from "./routes/user"
 import dotenv from "dotenv"
@@ -12,7 +12,7 @@ app.use(express.json());
 dotenv.config();
 dbConnect();
 
-app.use("/deploy", deployRoute)
+app.use("/deployment", deployRoute)
 app.use("/project", projectRoute)
 app.use("/user", userRoute)
 

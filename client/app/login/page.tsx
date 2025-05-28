@@ -6,10 +6,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Github } from "lucide-react";
 import Link from "next/link";
 import app from "@/utils/firebase";
+import axios from "axios"
+import { loginRoute } from "@/utils/routeProvider";
+import { useRouter } from "next/navigation";
+import { useContext } from "react";
+import { UserContext } from "@/context/UserContext/UserContext";
 
 export default function LoginPage() {
 
+  const router = useRouter();
   const auth = getAuth(app);
+  const { setUser } = useContext(UserContext);
   const provider = new GithubAuthProvider();
   provider.addScope("repo");
   provider.addScope("read:user");
@@ -18,14 +25,25 @@ export default function LoginPage() {
 
     const result = await signInWithPopup(auth, provider);
     console.log(result)
-    const credential = GithubAuthProvider.credentialFromResult(result);
-    const token = credential?.accessToken;
+    const name = result.user.displayName;
+    const email = result.user.email;
+    const photoUrl = result.user.photoURL
+    const refreshToken = result.user.refreshToken;
 
-    const repos = await fetch("https://api.github.com/user/repos", {
-      headers: {
-        Authorization: `token ${token}`,
-      },
-    }).then(res => res.json());
+    const response = await axios.post(loginRoute, { name, email, photoUrl, refreshToken })
+    if (response.data.status) {
+      localStorage.setItem("token", JSON.stringify(response.data.user))
+      setUser(response.data.user);
+      router.push("/dashboard")
+    }
+    else {
+      console.log(response.data.error)
+    }
+    // const repos = await fetch("https://api.github.com/user/repos", {
+    //   headers: {
+    //     Authorization: `token ${token}`,
+    //   },
+    // }).then(res => res.json());
 
   }
 

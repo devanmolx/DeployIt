@@ -3,6 +3,9 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Analytics } from '@/components/analytics';
+import ProjectContextProvider from '@/context/ProjectContext/ProjectContextProvider';
+import UserContextProvider from '@/context/UserContext/UserContextProvider';
+import DeploymentContextProvider from '@/context/DeploymentContext/DeploymentContextProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,8 +23,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          {children}
-          <Analytics />
+          <UserContextProvider>
+            <ProjectContextProvider>
+              <DeploymentContextProvider>
+                {children}
+              </DeploymentContextProvider>
+              <Analytics />
+            </ProjectContextProvider>
+          </UserContextProvider>
         </ThemeProvider>
       </body>
     </html>

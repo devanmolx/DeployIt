@@ -8,6 +8,11 @@ const logSchema = new mongoose.Schema({
 
 const deploymentSchema = new mongoose.Schema({
 
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
+        required:true
+    },
     project: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'project',
