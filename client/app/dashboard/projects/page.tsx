@@ -1,8 +1,7 @@
 import { DashboardNav } from "@/components/dashboard/dashboard-nav";
-import { ProjectCard } from "@/components/dashboard/project-card";
+import Projects from "@/components/dashboard/projects";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { projects } from "@/lib/data";
+import { Card } from "@/components/ui/card";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 
@@ -26,19 +25,7 @@ export default function ProjectsPage() {
         </div>
 
         <Card>
-          <CardHeader>
-            <CardTitle>All Projects</CardTitle>
-            <CardDescription>
-              {projects.length} total projects
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {projects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              ))}
-            </div>
-          </CardContent>
+          <Projects/>
         </Card>
       </div>
     </div>

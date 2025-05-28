@@ -4,21 +4,23 @@ import User from "../models/User";
 const router = Router();
 
 router.post("/login", async (req, res) => {
-    const { name, email, refreshToken } = req.body;
+    const { name, email, refreshToken , accessToken , photoUrl } = req.body;
     console.log(name)
 
     try {
-        let user;
 
         const existingUser = await User.findOne({ email });
-
+        
         if (existingUser) {
-            user = existingUser;
+            existingUser.name = name;
+            existingUser.accessToken = accessToken;
+            existingUser.refreshToken = refreshToken;
+            existingUser.photoUrl = photoUrl;
+            await existingUser.save();
+            res.status(200).json({ user:existingUser, status: true });
         }
 
-        if (!user) {
-            user = await User.create({ name, email, refreshToken });
-        }
+        const user = await User.create({ name, email, refreshToken , accessToken , photoUrl });
 
         if (user) {
             res.status(200).json({ user, status: true });

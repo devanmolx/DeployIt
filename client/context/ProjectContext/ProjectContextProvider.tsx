@@ -15,7 +15,6 @@ const ProjectContextProvider = ({ children }: { children: ReactNode }) => {
         try {
             const response = await axios.post(projectsRoute, { userId: user._id });
             setProjects(response.data.projects);
-            console.log(response.data.projects);
         } catch (error) {
             console.log(error);
         }

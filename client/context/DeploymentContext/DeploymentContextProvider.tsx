@@ -15,7 +15,6 @@ const DeploymentContextProvider = ({ children }: { children: ReactNode }) => {
             try {
                 const response = await axios.post(deploymentsRoute, { userId: user._id });
                 setDeployments(response.data.deployments);
-                console.log(response.data.deployments);
             } catch (error) {
                 console.log(error);
             }

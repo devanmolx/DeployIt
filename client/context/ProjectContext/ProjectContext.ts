@@ -1,4 +1,5 @@
 import { createContext } from "react";
+import { DeploymentType } from "@/context/DeploymentContext/DeploymentContext"
 
 export interface ProjectType{
     _id: string;
@@ -7,6 +8,7 @@ export interface ProjectType{
     gitRepoUrl: string;
     createdAt: Date;
     updatedAt: Date;
+    deployments:DeploymentType[]
 }
 
 interface ProjectContextType{

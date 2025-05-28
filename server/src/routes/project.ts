@@ -46,7 +46,7 @@ router.post("/all", async (req, res) => {
 
     try {
         
-        const projects = await Project.find({ user: userId });
+        const projects = await Project.find({ user: userId }).populate("deployments");
         
         if (projects) {
             res.status(200).json({projects, status: true});

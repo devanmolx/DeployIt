@@ -3,10 +3,10 @@ import { ProjectCard } from "@/components/dashboard/project-card";
 import { RecentDeployments } from "@/components/dashboard/recent-deployments";
 import { AnalyticsCard } from "@/components/dashboard/analytics-card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { projects, analyticsData } from "@/lib/data";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import Projects from "@/components/dashboard/projects";
 
 export default function DashboardPage() {
   // Get the most recent deployments across all projects
@@ -17,10 +17,10 @@ export default function DashboardPage() {
 
   // Calculate total deployment count for the week
   const totalDeployments = analyticsData.deployments.reduce((sum, item) => sum + item.count, 0);
-  
+
   // Calculate total visitors for the week
   const totalVisitors = analyticsData.visitors.reduce((sum, item) => sum + item.count, 0);
-  
+
   // Calculate total bandwidth for the week
   const totalBandwidth = analyticsData.bandwidth.reduce((sum, item) => sum + item.gb, 0).toFixed(1);
 
@@ -43,7 +43,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <AnalyticsCard 
+          <AnalyticsCard
             title="Total Deployments"
             value={totalDeployments.toString()}
             description="Total deployments this week"
@@ -51,7 +51,7 @@ export default function DashboardPage() {
             dataKey="count"
             color="hsl(var(--chart-1))"
           />
-          <AnalyticsCard 
+          <AnalyticsCard
             title="Total Visitors"
             value={totalVisitors.toString()}
             description="Unique visitors this week"
@@ -59,7 +59,7 @@ export default function DashboardPage() {
             dataKey="count"
             color="hsl(var(--chart-2))"
           />
-          <AnalyticsCard 
+          <AnalyticsCard
             title="Bandwidth Usage"
             value={totalBandwidth}
             description="Total bandwidth used this week"
@@ -71,26 +71,9 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle>Your Projects</CardTitle>
-                <CardDescription>
-                  {projects.length} total projects
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {projects.map((project) => (
-                    <ProjectCard key={project.id} project={project} />
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-          
+          <Projects />
           <div>
-            <RecentDeployments deployments={recentDeployments} />
+            <RecentDeployments />
           </div>
         </div>
       </div>

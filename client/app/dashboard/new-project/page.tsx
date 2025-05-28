@@ -122,23 +122,6 @@ export default function NewProjectPage() {
               <Button className="w-full">Create Project</Button>
             </CardContent>
           </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Deploy Your Own Code</CardTitle>
-              <CardDescription>
-                Deploy from your local machine
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="bg-muted p-4 rounded-lg font-mono text-sm">
-                <p className="mb-2"># Install the CLI</p>
-                <p className="text-muted-foreground">$ npm install -g deploy-cli</p>
-                <p className="mt-4 mb-2"># Deploy your project</p>
-                <p className="text-muted-foreground">$ deploy init</p>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>

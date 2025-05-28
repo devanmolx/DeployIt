@@ -24,13 +24,14 @@ export default function LoginPage() {
   async function signInWithGithub() {
 
     const result = await signInWithPopup(auth, provider);
-    console.log(result)
     const name = result.user.displayName;
     const email = result.user.email;
     const photoUrl = result.user.photoURL
     const refreshToken = result.user.refreshToken;
+    const credental = GithubAuthProvider.credentialFromResult(result);
+    const accessToken = credental!.accessToken;
 
-    const response = await axios.post(loginRoute, { name, email, photoUrl, refreshToken })
+    const response = await axios.post(loginRoute, { name, email, photoUrl, refreshToken ,accessToken })
     if (response.data.status) {
       localStorage.setItem("token", JSON.stringify(response.data.user))
       setUser(response.data.user);
@@ -41,9 +42,10 @@ export default function LoginPage() {
     }
     // const repos = await fetch("https://api.github.com/user/repos", {
     //   headers: {
-    //     Authorization: `token ${token}`,
+    //     Authorization: `token ${accessToken}`,
     //   },
     // }).then(res => res.json());
+    // console.log(repos)
 
   }
 

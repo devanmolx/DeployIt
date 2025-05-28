@@ -1,9 +1,10 @@
+"use client"
 import { createContext } from "react";
 
-enum StatusType{
-    Success,
-    Failed,
-    Deploying
+export enum StatusType{
+    Success = "Success",
+    Failed = "Failed",
+    Deploying = "Deploying"
 }
 
 interface LogType{
@@ -16,7 +17,10 @@ export interface DeploymentType{
     _id: string;
     project: string;
     status: StatusType;
-    logs: LogType[]
+    logs: LogType[];
+    createdAt: Date;
+    updatedAt: Date;
+    user: string;
 }
 
 interface DeploymentContextType{
