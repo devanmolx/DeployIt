@@ -22,9 +22,24 @@ router.post("/new", async (req, res) => {
             project = await Project.create({ name, user: userId, slug, gitRepoUrl })
         }
 
+        const { pathname } = new URL(gitRepoUrl);
+        const response = await fetch(`https://api.github.com/repos${pathname}/commits`);
+        const commits = await response.json();
+        let commitSha;
+        let commitMsg;
+
+        if (commits.length > 0) {
+            const latestCommit = commits[0];
+            commitSha = latestCommit.sha;
+            commitMsg = latestCommit.commit.message;
+        
+            console.log("SHA:", commitSha);
+            console.log("Message:", commitMsg);
+        }
+
         if (project) {
 
-            const deployment = await Deployment.create({ user: userId, project: project._id })
+            const deployment = await Deployment.create({ user: userId, project: project._id , commitMsg , commitSha , slug })
 
             if (deployment) {
                 await publisher.lPush('build_queue', JSON.stringify({ deploymentId: deployment._id, slug, gitRepoUrl }));

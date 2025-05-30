@@ -24,9 +24,29 @@ const deploymentSchema = new mongoose.Schema({
         default: "Deploying",
         required: true
     },
+    commitSha: {
+        type: String,
+    },
+    commitMsg: {
+        type: String,
+    },
+    slug: {
+        type: String,
+        required:true
+    },
+    url: {
+        type:String
+    },
     logs:[logSchema]
 
-},{timestamps:true})
+}, { timestamps: true })
+
+deploymentSchema.pre('save', function (next) {
+    if (this.isModified('slug')) { 
+        this.url = `https://${this.slug}.deployit.anmolgarg.tech`;
+    }
+    next();
+});
 
 const Deployment = mongoose.model("deployment", deploymentSchema);
 

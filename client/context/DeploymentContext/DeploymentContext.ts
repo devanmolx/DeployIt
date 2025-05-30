@@ -18,6 +18,10 @@ export interface DeploymentType{
     project: string;
     status: StatusType;
     logs: LogType[];
+    commitSha: string;
+    commitMsg: string;
+    slug: string;
+    url: string;
     createdAt: Date;
     updatedAt: Date;
     user: string;

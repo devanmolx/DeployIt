@@ -186,7 +186,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                                 deployment.status === StatusType.Failed ? 'bg-red-500' : 'bg-blue-500'}`}
                           ></div>
                           <p className="font-medium">
-                            {/* {deployment.commitMessage || "No commit message"} */}
+                            {deployment.commitMsg || "No commit message"}
                           </p>
                           <span className="ml-auto text-sm text-muted-foreground">
                             {new Date(deployment.createdAt).toLocaleString()}
@@ -204,7 +204,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                               <span className="text-muted-foreground">Branch:</span>{" "}
                               <span className="font-medium">{deployment.branch}</span>
                             </div>
-                          )}
+                          )} */}
                           {deployment.commitSha && (
                             <div>
                               <span className="text-muted-foreground">Commit:</span>{" "}
@@ -212,8 +212,8 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                                 {deployment.commitSha.substring(0, 7)}
                               </code>
                             </div>
-                          )} */}
-                          {/* {deployment. && (
+                          )}
+                          {deployment.url && (
                             <div>
                               <span className="text-muted-foreground">URL:</span>{" "}
                               <a 
@@ -225,7 +225,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                                 {deployment.url.split("//")[1]}
                               </a>
                             </div>
-                          )} */}
+                          )}
                         </div>
                       </div>
                     </div>

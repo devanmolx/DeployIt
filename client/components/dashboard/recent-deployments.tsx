@@ -36,18 +36,18 @@ export function RecentDeployments() {
               <div className="flex-1 space-y-1">
                 <div className="flex items-center">
                   <p className="text-sm font-medium">
-                    {"No commit message"}
+                    {deployment.commitMsg || "No commit message"}
                   </p>
                   <span className="ml-auto text-xs text-muted-foreground">
                     {formatDistanceToNow(new Date(deployment.createdAt), { addSuffix: true })}
                   </span>
                 </div>
-                {/* {deployment.commitSha && (
+                {deployment.commitSha && (
                   <div className="flex items-center text-xs text-muted-foreground">
                     <GitCommit className="mr-1 h-3 w-3" />
                     <code>{deployment.commitSha.substring(0, 7)}</code>
                   </div>
-                )} */}
+                )}
                 <div className="text-xs text-muted-foreground">
                   {deployment.status === StatusType.Deploying ? 'Building...' : 
                    deployment.status === StatusType.Success ? 'Deployment successful' : 
