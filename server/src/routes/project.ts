@@ -61,6 +61,25 @@ router.post("/all", async (req, res) => {
     }
 })
 
+router.post("/", async (req, res) => {
+    const { id } = req.body;
+
+    try {
+
+        const project = await Project.findById(id).populate("deployments");
+
+        if (project) {
+            res.status(200).json({ project, status: true });
+        }
+        else {
+            res.status(400).json({ error: "Unable to get projects", status: false });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error, status: false });
+    }
+})
+
 router.post("/gitProjects", async (req, res) => {
     const { userId } = req.body;
     try {

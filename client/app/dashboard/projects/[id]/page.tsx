@@ -1,12 +1,16 @@
+"use client"
 import { DashboardNav } from "@/components/dashboard/dashboard-nav";
-import { RecentDeployments } from "@/components/dashboard/recent-deployments";
 import { StatusCard } from "@/components/dashboard/status-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { getProjectById } from "@/lib/data";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowUpRight, GitBranch, ExternalLink, Settings, Activity, Trash2 } from "lucide-react";
-import { notFound } from "next/navigation";
+import { useEffect, useState } from "react";
+import { ProjectType } from "@/context/ProjectContext/ProjectContext";
+import { StatusType } from "@/context/DeploymentContext/DeploymentContext";
+import axios from "axios";
+import { projectRoute } from "@/utils/routeProvider";
+import { ProjectDeployments } from "@/components/project-deployments";
 
 interface ProjectPageProps {
   params: {
@@ -15,10 +19,32 @@ interface ProjectPageProps {
 }
 
 export default function ProjectPage({ params }: ProjectPageProps) {
-  const project = getProjectById(params.id);
+
+  const [project, setProject] = useState<ProjectType>();
   
-  if (!project) {
-    notFound();
+  useEffect(() => {
+    fetchProject(params.id);
+  } , [params.id])
+  
+  async function fetchProject(id: string) {
+    try {
+      const response = await axios.post(projectRoute, { id });
+      
+      if (response.data.status) {
+        setProject(response.data.project);
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  if (project == undefined) {
+    return (
+      <div>
+        Loading
+      </div>
+    )
   }
 
   return (
@@ -29,14 +55,14 @@ export default function ProjectPage({ params }: ProjectPageProps) {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <h1 className="text-3xl font-bold">{project.name}</h1>
-              {project.url && (
-                <a href={project.url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+              {project.slug && (
+                <a href={project.slug} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
                   <ExternalLink className="h-5 w-5" />
                 </a>
               )}
             </div>
             <p className="text-muted-foreground">
-              {project.description}
+              {project.slug}
             </p>
           </div>
           <div className="flex gap-2 mt-4 md:mt-0">
@@ -69,16 +95,16 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      <div>
+                      {/* <div>
                         <div className="text-sm font-medium">Framework</div>
                         <div className="text-sm text-muted-foreground">{project.framework}</div>
-                      </div>
-                      {project.githubRepo && (
+                      </div> */}
+                      {project.gitRepoUrl && (
                         <div>
                           <div className="text-sm font-medium">GitHub Repository</div>
                           <div className="text-sm text-muted-foreground flex items-center gap-2">
                             <GitBranch className="h-4 w-4" />
-                            {project.githubRepo}
+                            {project.gitRepoUrl}
                           </div>
                         </div>
                       )}
@@ -90,7 +116,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                       </div>
                       <div>
                         <div className="text-sm font-medium">Team</div>
-                        <div className="text-sm text-muted-foreground">{project.team || 'Personal'}</div>
+                        <div className="text-sm text-muted-foreground">{'Personal'}</div>
                       </div>
                     </div>
                   </CardContent>
@@ -134,7 +160,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
               
               <div className="space-y-6">
                 <StatusCard project={project} />
-                <RecentDeployments deployments={project.deployments.slice(0, 3)} />
+                <ProjectDeployments deployments={project.deployments} />
               </div>
             </div>
           </TabsContent>
@@ -150,17 +176,17 @@ export default function ProjectPage({ params }: ProjectPageProps) {
               <CardContent>
                 <div className="space-y-6">
                   {project.deployments.map((deployment) => (
-                    <div key={deployment.id} className="flex items-start border-b pb-4 last:border-0 last:pb-0">
+                    <div key={deployment._id} className="flex items-start border-b pb-4 last:border-0 last:pb-0">
                       <div className="flex-1">
                         <div className="flex items-center">
                           <div 
                             className={`w-2 h-2 rounded-full mr-2 
-                              ${deployment.status === 'success' ? 'bg-green-500' : 
-                                deployment.status === 'building' ? 'bg-yellow-500 animate-pulse' : 
-                                deployment.status === 'failed' ? 'bg-red-500' : 'bg-blue-500'}`}
+                              ${deployment.status === StatusType.Success ? 'bg-green-500' : 
+                                deployment.status === StatusType.Deploying ? 'bg-yellow-500 animate-pulse' : 
+                                deployment.status === StatusType.Failed ? 'bg-red-500' : 'bg-blue-500'}`}
                           ></div>
                           <p className="font-medium">
-                            {deployment.commitMessage || "No commit message"}
+                            {/* {deployment.commitMessage || "No commit message"} */}
                           </p>
                           <span className="ml-auto text-sm text-muted-foreground">
                             {new Date(deployment.createdAt).toLocaleString()}
@@ -173,7 +199,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                               {deployment.status.charAt(0).toUpperCase() + deployment.status.slice(1)}
                             </span>
                           </div>
-                          {deployment.branch && (
+                          {/* {deployment.branch && (
                             <div>
                               <span className="text-muted-foreground">Branch:</span>{" "}
                               <span className="font-medium">{deployment.branch}</span>
@@ -186,8 +212,8 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                                 {deployment.commitSha.substring(0, 7)}
                               </code>
                             </div>
-                          )}
-                          {deployment.url && (
+                          )} */}
+                          {/* {deployment. && (
                             <div>
                               <span className="text-muted-foreground">URL:</span>{" "}
                               <a 
@@ -199,7 +225,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                                 {deployment.url.split("//")[1]}
                               </a>
                             </div>
-                          )}
+                          )} */}
                         </div>
                       </div>
                     </div>

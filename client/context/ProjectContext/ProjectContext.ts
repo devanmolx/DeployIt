@@ -3,6 +3,7 @@ import { DeploymentType } from "@/context/DeploymentContext/DeploymentContext"
 
 export interface ProjectType{
     _id: string;
+    name: string;
     user: string;
     slug: string;
     gitRepoUrl: string;

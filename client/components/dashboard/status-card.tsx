@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Project } from "@/lib/data";
+import { StatusType } from "@/context/DeploymentContext/DeploymentContext";
+import { ProjectType } from "@/context/ProjectContext/ProjectContext";
 
 interface StatusCardProps {
-  project: Project;
+  project: ProjectType;
 }
 
 export function StatusCard({ project }: StatusCardProps) {
@@ -10,14 +11,12 @@ export function StatusCard({ project }: StatusCardProps) {
   
   function getStatusColor(status: string) {
     switch(status) {
-      case 'success':
+      case StatusType.Success:
         return 'bg-green-500';
-      case 'building':
+      case StatusType.Deploying:
         return 'bg-yellow-500 animate-pulse';
-      case 'failed':
+      case StatusType.Failed:
         return 'bg-red-500';
-      case 'queued':
-        return 'bg-blue-500';
       default:
         return 'bg-gray-500';
     }
@@ -25,14 +24,12 @@ export function StatusCard({ project }: StatusCardProps) {
 
   function getStatusText(status: string) {
     switch(status) {
-      case 'success':
+      case StatusType.Success:
         return 'Ready';
-      case 'building':
+      case StatusType.Deploying:
         return 'Building';
-      case 'failed':
+      case StatusType.Failed:
         return 'Failed';
-      case 'queued':
-        return 'Queued';
       default:
         return 'Unknown';
     }
@@ -52,16 +49,16 @@ export function StatusCard({ project }: StatusCardProps) {
         ) : (
           <div className="text-muted-foreground">No deployments yet</div>
         )}
-        {project.url && (
+        {project.slug && (
           <div className="mt-4">
             <div className="text-sm text-muted-foreground mb-1">Production URL</div>
             <a 
-              href={project.url} 
+              href={project.slug} 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-sm underline underline-offset-4"
             >
-              {project.url}
+              {project.slug}
             </a>
           </div>
         )}
