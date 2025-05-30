@@ -14,6 +14,9 @@ router.post("/new", async (req, res) => {
     const existingProject = await Project.findOne({ user: userId, gitRepoUrl });
 
     if (existingProject) {
+        existingProject.name = name;
+        existingProject.slug = slug;
+        await existingProject.save();
         project = existingProject;
     }
 
@@ -43,7 +46,7 @@ router.post("/new", async (req, res) => {
 
             if (deployment) {
                 await publisher.lPush('build_queue', JSON.stringify({ deploymentId: deployment._id, slug, gitRepoUrl }));
-                res.status(200).json({ deployment, status: true })
+                res.status(200).json({ project, deployment, status: true })
             }
             else {
                 res.status(500).json({ error: "Internal server error", status: false })

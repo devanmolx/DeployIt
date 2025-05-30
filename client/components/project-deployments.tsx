@@ -30,7 +30,7 @@ export function ProjectDeployments({deployments}:PropType) {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {deployments.map((deployment) => (
+          {[...deployments].reverse().map((deployment) => (
             <div key={deployment._id} className="flex items-start">
               <div className={`mt-1 w-3 h-3 rounded-full mr-3 ${getStatusColor(deployment.status)}`}></div>
               <div className="flex-1 space-y-1">

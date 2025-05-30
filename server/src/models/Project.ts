@@ -15,6 +15,9 @@ const projectSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    url: {
+        type: String,
+    },
     gitRepoUrl: {
         type: String,
         required: true,
@@ -29,6 +32,14 @@ projectSchema.virtual("deployments", {
 
 projectSchema.set("toObject", { virtuals: true });
 projectSchema.set("toJSON", { virtuals: true });
+
+projectSchema.pre('save', function (next) {
+    if (this.isModified('slug')) { 
+        this.url = `https://${this.slug}.deployit.anmolgarg.tech`;
+    }
+    next();
+});
+
 
 const Project = mongoose.model("project", projectSchema);
 

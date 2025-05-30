@@ -25,6 +25,7 @@ import clsx from "clsx";
 import { UserContext } from "@/context/UserContext/UserContext";
 import axios from "axios";
 import { gitReposRoute, newProjectRoute, slugAvailablityRoute } from "@/utils/routeProvider";
+import { useRouter } from "next/navigation";
 
 
 interface GitRepoType{
@@ -57,6 +58,8 @@ export default function NewProjectPage() {
   const [projectName, setProjectName] = useState("");
   const [gitRepos, setGitRepos] = useState<GitRepoType[]>([]);
 
+  const router = useRouter();
+
   const handleSubdomainChange = async (value: string) => {
     setSubdomain(value);
     if (value.length < 3) {
@@ -86,10 +89,13 @@ export default function NewProjectPage() {
       
       const response = await axios.post(newProjectRoute , {name:projectName , userId:user._id , slug:subdomain , gitRepoUrl:gitUrl})
 
+      if (response.data.status) {
+        router.push(`projects/${response.data.project._id}`);
+      }
+
     } catch (error) {
-      
+      console.log(error);
     }
-    console.log({ gitUrl, subdomain, projectName });
   };
 
   const { user } = useContext(UserContext);

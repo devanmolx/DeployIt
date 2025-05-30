@@ -6,6 +6,7 @@ export interface ProjectType{
     name: string;
     user: string;
     slug: string;
+    url: string;
     gitRepoUrl: string;
     createdAt: Date;
     updatedAt: Date;

@@ -11,6 +11,7 @@ import { StatusType } from "@/context/DeploymentContext/DeploymentContext";
 import axios from "axios";
 import { projectRoute } from "@/utils/routeProvider";
 import { ProjectDeployments } from "@/components/project-deployments";
+import { useRouter } from "next/navigation";
 
 interface ProjectPageProps {
   params: {
@@ -21,6 +22,7 @@ interface ProjectPageProps {
 export default function ProjectPage({ params }: ProjectPageProps) {
 
   const [project, setProject] = useState<ProjectType>();
+  const router = useRouter();
   
   useEffect(() => {
     fetchProject(params.id);
@@ -55,8 +57,8 @@ export default function ProjectPage({ params }: ProjectPageProps) {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <h1 className="text-3xl font-bold">{project.name}</h1>
-              {project.slug && (
-                <a href={project.slug} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+              {project.url && (
+                <a href={project.url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
                   <ExternalLink className="h-5 w-5" />
                 </a>
               )}
@@ -69,8 +71,8 @@ export default function ProjectPage({ params }: ProjectPageProps) {
             <Button variant="outline" className="gap-2">
               <Settings className="h-4 w-4" /> Settings
             </Button>
-            <Button className="gap-2">
-              <ArrowUpRight className="h-4 w-4" /> Deploy
+            <Button onClick={() => { router.push(project.url) }} className="gap-2">
+              <ArrowUpRight className="h-4 w-4" /> Live
             </Button>
           </div>
         </div>

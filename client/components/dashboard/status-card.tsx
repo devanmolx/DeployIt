@@ -53,12 +53,12 @@ export function StatusCard({ project }: StatusCardProps) {
           <div className="mt-4">
             <div className="text-sm text-muted-foreground mb-1">Production URL</div>
             <a 
-              href={project.slug} 
+              href={project.url} 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-sm underline underline-offset-4"
             >
-              {project.slug}
+              {project.url}
             </a>
           </div>
         )}
