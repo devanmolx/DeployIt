@@ -16,9 +16,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Home, Settings, LogOut, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { UserContext } from "@/context/UserContext/UserContext";
+import Cookies from "js-cookie"
 
 export function DashboardNav() {
   const pathname = usePathname();
+
+  const { user } = React.useContext(UserContext);
+
+  function handleLogout() {
+    Cookies.remove("token");
+    window.location.href = "/login"
+  }
   
   return (
     <div className="border-b">
@@ -82,7 +91,7 @@ export function DashboardNav() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar className="h-9 w-9 cursor-pointer">
-                <AvatarImage src="https://github.com/shadcn.png" alt="User" />
+                <AvatarImage src={user.photoUrl} alt="User" />
                 <AvatarFallback>SC</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
@@ -96,7 +105,7 @@ export function DashboardNav() {
                 <Settings className="mr-2 h-4 w-4" /> Settings
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4" /> Logout
               </DropdownMenuItem>
             </DropdownMenuContent>

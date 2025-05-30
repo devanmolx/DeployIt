@@ -1,5 +1,4 @@
 import { DashboardNav } from "@/components/dashboard/dashboard-nav";
-import { ProjectCard } from "@/components/dashboard/project-card";
 import { RecentDeployments } from "@/components/dashboard/recent-deployments";
 import { AnalyticsCard } from "@/components/dashboard/analytics-card";
 import { Button } from "@/components/ui/button";
@@ -7,13 +6,16 @@ import { projects, analyticsData } from "@/lib/data";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import Projects from "@/components/dashboard/projects";
+import {cookies} from "next/headers"
+import { redirect } from "next/navigation";
 
-export default function DashboardPage() {
-  // Get the most recent deployments across all projects
-  const recentDeployments = projects
-    .flatMap(project => project.deployments)
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 5);
+export default async function DashboardPage() {
+
+  const token = cookies().get("token")?.value;
+
+  if (!token) {
+    redirect("/login")
+  }
 
   // Calculate total deployment count for the week
   const totalDeployments = analyticsData.deployments.reduce((sum, item) => sum + item.count, 0);

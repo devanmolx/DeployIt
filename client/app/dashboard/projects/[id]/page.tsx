@@ -12,6 +12,7 @@ import axios from "axios";
 import { projectRoute } from "@/utils/routeProvider";
 import { ProjectDeployments } from "@/components/project-deployments";
 import { useRouter } from "next/navigation";
+import Loading from "@/components/Loading";
 
 interface ProjectPageProps {
   params: {
@@ -23,15 +24,15 @@ export default function ProjectPage({ params }: ProjectPageProps) {
 
   const [project, setProject] = useState<ProjectType>();
   const router = useRouter();
-  
+
   useEffect(() => {
     fetchProject(params.id);
-  } , [params.id])
-  
+  }, [params.id])
+
   async function fetchProject(id: string) {
     try {
       const response = await axios.post(projectRoute, { id });
-      
+
       if (response.data.status) {
         setProject(response.data.project);
       }
@@ -43,9 +44,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
 
   if (project == undefined) {
     return (
-      <div>
-        Loading
-      </div>
+      <Loading />
     )
   }
 
@@ -63,9 +62,6 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                 </a>
               )}
             </div>
-            <p className="text-muted-foreground">
-              {project.slug}
-            </p>
           </div>
           <div className="flex gap-2 mt-4 md:mt-0">
             <Button variant="outline" className="gap-2">
@@ -84,7 +80,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="overview" className="pt-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-2 space-y-6">
@@ -123,7 +119,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                     </div>
                   </CardContent>
                 </Card>
-                
+
                 <Card>
                   <CardHeader>
                     <CardTitle>Environment Variables</CardTitle>
@@ -144,7 +140,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                     </div>
                   </CardContent>
                 </Card>
-                
+
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-destructive">Danger Zone</CardTitle>
@@ -159,14 +155,14 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                   </CardContent>
                 </Card>
               </div>
-              
+
               <div className="space-y-6">
                 <StatusCard project={project} />
                 <ProjectDeployments deployments={project.deployments} />
               </div>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="deployments" className="pt-4">
             <Card>
               <CardHeader>
@@ -177,15 +173,15 @@ export default function ProjectPage({ params }: ProjectPageProps) {
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
-                  {project.deployments.map((deployment) => (
+                  {[...project.deployments].reverse().map((deployment) => (
                     <div key={deployment._id} className="flex items-start border-b pb-4 last:border-0 last:pb-0">
                       <div className="flex-1">
                         <div className="flex items-center">
-                          <div 
+                          <div
                             className={`w-2 h-2 rounded-full mr-2 
-                              ${deployment.status === StatusType.Success ? 'bg-green-500' : 
-                                deployment.status === StatusType.Deploying ? 'bg-yellow-500 animate-pulse' : 
-                                deployment.status === StatusType.Failed ? 'bg-red-500' : 'bg-blue-500'}`}
+                              ${deployment.status === StatusType.Success ? 'bg-green-500' :
+                                deployment.status === StatusType.Deploying ? 'bg-yellow-500 animate-pulse' :
+                                  deployment.status === StatusType.Failed ? 'bg-red-500' : 'bg-blue-500'}`}
                           ></div>
                           <p className="font-medium">
                             {deployment.commitMsg || "No commit message"}
@@ -218,10 +214,10 @@ export default function ProjectPage({ params }: ProjectPageProps) {
                           {deployment.url && (
                             <div>
                               <span className="text-muted-foreground">URL:</span>{" "}
-                              <a 
-                                href={deployment.url} 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
+                              <a
+                                href={deployment.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="text-blue-500 hover:underline"
                               >
                                 {deployment.url.split("//")[1]}
@@ -236,7 +232,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
               </CardContent>
             </Card>
           </TabsContent>
-          
+
           <TabsContent value="analytics" className="pt-4">
             <Card>
               <CardHeader>
@@ -256,7 +252,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
               </CardContent>
             </Card>
           </TabsContent>
-          
+
           <TabsContent value="settings" className="pt-4">
             <Card>
               <CardHeader>

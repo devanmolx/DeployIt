@@ -11,6 +11,7 @@ import { loginRoute } from "@/utils/routeProvider";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
 import { UserContext } from "@/context/UserContext/UserContext";
+import Cookies from "js-cookie"
 
 export default function LoginPage() {
 
@@ -34,18 +35,13 @@ export default function LoginPage() {
     const response = await axios.post(loginRoute, { name, email, photoUrl, refreshToken ,accessToken })
     if (response.data.status) {
       localStorage.setItem("token", JSON.stringify(response.data.user))
+      Cookies.set("token" , JSON.stringify(response.data.user))
       setUser(response.data.user);
       router.push("/dashboard")
     }
     else {
       console.log(response.data.error)
     }
-    // const repos = await fetch("https://api.github.com/user/repos", {
-    //   headers: {
-    //     Authorization: `token ${accessToken}`,
-    //   },
-    // }).then(res => res.json());
-    // console.log(repos)
 
   }
 
