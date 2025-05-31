@@ -28,6 +28,8 @@ export async function GET(request: Request) {
       Key
     };
 
+    console.log(params)
+
     const command = new GetObjectCommand(params);
     const data = await s3.send(command);
 
