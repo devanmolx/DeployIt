@@ -70,7 +70,7 @@ export function DashboardNav() {
           >
             Analytics
           </Link>
-          <Link
+          {/* <Link
             href="/dashboard/settings"
             className={cn(
               "text-sm font-medium transition-colors hover:text-primary",
@@ -80,7 +80,7 @@ export function DashboardNav() {
             )}
           >
             Settings
-          </Link>
+          </Link> */}
         </nav>
         <div className="ml-auto flex items-center space-x-4">
           <Button variant="ghost" size="icon" className="relative">

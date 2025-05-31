@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowUpRight, GitBranch, ExternalLink, Settings, Activity, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ProjectType } from "@/context/ProjectContext/ProjectContext";
-import { StatusType } from "@/context/DeploymentContext/DeploymentContext";
+import { LogType , StatusType } from "@/context/DeploymentContext/DeploymentContext";
 import axios from "axios";
 import { projectRoute } from "@/utils/routeProvider";
 import { ProjectDeployments } from "@/components/project-deployments";
@@ -77,6 +77,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="deployments">Deployments</TabsTrigger>
+            <TabsTrigger value="logs">Logs</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
@@ -232,6 +233,37 @@ export default function ProjectPage({ params }: ProjectPageProps) {
               </CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="logs" className="pt-4">
+            <Card className="max-h-[600px] overflow-auto">
+              <CardHeader>
+                <CardTitle>Latest Deployment Logs</CardTitle>
+                <CardDescription>
+                  Showing logs for latest deployment {project.deployments?.[0]?._id || "(none)"}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {project.deployments?.[0]?.logs?.length > 0 ? (
+                  <div className="space-y-1 max-h-[500px] overflow-auto font-mono text-xs  p-4 rounded whitespace-pre-wrap">
+                    {project.deployments[0].logs
+                      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+                      .map((log: LogType, idx: number) => (
+                        <div key={idx}>
+                          <span className="text-gray-500 mr-2">
+                            [{new Date(log.createdAt).toLocaleTimeString()}]
+                          </span>
+                          {log.message}
+                        </div>
+                      ))}
+                  </div>
+                ) : (
+                  <p>No logs available for the latest deployment.</p>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+
 
           <TabsContent value="analytics" className="pt-4">
             <Card>

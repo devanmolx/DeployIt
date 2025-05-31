@@ -8,6 +8,11 @@ const logSchema = new mongoose.Schema({
 
 const deploymentSchema = new mongoose.Schema({
 
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
+        required:true
+    },
     project: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'project',
@@ -19,9 +24,32 @@ const deploymentSchema = new mongoose.Schema({
         default: "Deploying",
         required: true
     },
+    commitSha: {
+        type: String,
+    },
+    commitMsg: {
+        type: String,
+    },
+    slug: {
+        type: String,
+        required:true
+    },
+    url: {
+        type:String
+    },
+    framework: {
+        type:String
+    },
     logs:[logSchema]
 
-},{timestamps:true})
+}, { timestamps: true })
+
+deploymentSchema.pre('save', function (next) {
+    if (this.isModified('slug')) { 
+        this.url = `https://${this.slug}.deployit.anmolgarg.tech`;
+    }
+    next();
+});
 
 const Deployment = mongoose.model("deployment", deploymentSchema);
 

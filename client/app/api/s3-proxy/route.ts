@@ -32,7 +32,7 @@ export async function GET(request: Request) {
             })
         }
         else {
-            return NextResponse.redirect(new URL('/404', request.url), 302);
+            return NextResponse.redirect(new URL('https://deployit.anmolgarg.tech/404', request.url), 302);
         }
 
     } catch (error: any) {
@@ -49,11 +49,11 @@ export async function GET(request: Request) {
                     },
                 });
             } catch {
-                return NextResponse.redirect(new URL('/404', request.url), 302);
+                return NextResponse.redirect(new URL('https://deployit.anmolgarg.tech/404', request.url), 302);
             }
 
         }
 
-        return NextResponse.redirect(new URL('/404', request.url), 302);
+        return NextResponse.redirect(new URL('https://deployit.anmolgarg.tech/404'), 302);
     }
 }

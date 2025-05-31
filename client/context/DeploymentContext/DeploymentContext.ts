@@ -7,7 +7,7 @@ export enum StatusType{
     Deploying = "Deploying"
 }
 
-interface LogType{
+export interface LogType{
     message: string;
     createdAt: Date;
     updatedAt: Date;

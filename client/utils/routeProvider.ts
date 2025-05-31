@@ -1,4 +1,4 @@
-const Base_Url = 'http://localhost:4000'
+const Base_Url = process.env.NEXT_PUBLIC_BACKEND_URL
 
 export const loginRoute = `${Base_Url}/user/login`
 export const projectsRoute = `${Base_Url}/project/all`
