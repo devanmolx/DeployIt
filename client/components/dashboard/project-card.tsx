@@ -35,7 +35,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
             <CardTitle className="text-lg">{project.slug}</CardTitle>
           </Link>
           {/* <Badge variant="outline">{project.framework}</Badge> */}
-          <Badge variant="outline">Next.js</Badge>
+          <Badge variant="outline">React</Badge>
         </div>
         {/* <p className="text-sm text-muted-foreground">{project.description}</p> */}
       </CardHeader>
