@@ -37,6 +37,9 @@ const deploymentSchema = new mongoose.Schema({
     url: {
         type:String
     },
+    framework: {
+        type:String
+    },
     logs:[logSchema]
 
 }, { timestamps: true })

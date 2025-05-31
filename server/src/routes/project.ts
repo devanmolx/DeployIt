@@ -111,7 +111,7 @@ router.post("/gitProjects", async (req, res) => {
 
         const accessToken = user!.accessToken;
 
-        let repos = await fetch("https://api.github.com/user/repos", {
+        let repos = await fetch("https://api.github.com/user/repos?per_page=100", {
             headers: {
                 Authorization: `token ${accessToken}`,
             },

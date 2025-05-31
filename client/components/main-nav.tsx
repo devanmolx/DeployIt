@@ -8,9 +8,12 @@ import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { LogIn } from "lucide-react";
+import { UserContext } from "@/context/UserContext/UserContext";
 
 export function MainNav() {
   const pathname = usePathname();
+
+  const { user } = React.useContext(UserContext);
   
   return (
     <div className="border-b">
@@ -78,16 +81,22 @@ export function MainNav() {
         </nav>
         <div className="ml-auto flex items-center space-x-4">
           <ModeToggle />
-          <Link href="/dashboard">
+          {
+            user._id &&
+            <Link href="/dashboard">
             <Button variant="ghost" className="hidden md:flex">
               Dashboard
             </Button>
           </Link>
+          }
+          { 
+            !user._id &&
           <Link href="/login">
             <Button>
               <LogIn className="mr-2 h-4 w-4" /> Login
             </Button>
           </Link>
+          }
         </div>
       </div>
     </div>

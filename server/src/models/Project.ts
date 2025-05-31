@@ -22,6 +22,9 @@ const projectSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    framework: {
+        type:String
+    }
 }, { timestamps: true })
 
 projectSchema.virtual("deployments", {

@@ -26,11 +26,12 @@ import { UserContext } from "@/context/UserContext/UserContext";
 import axios from "axios";
 import { gitReposRoute, newProjectRoute, slugAvailablityRoute } from "@/utils/routeProvider";
 import { useRouter } from "next/navigation";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
 
 
-interface GitRepoType{
+interface GitRepoType {
   name: string;
-  full_name:string;
+  full_name: string;
   description: string;
   html_url: string;
   created_at: Date;
@@ -39,7 +40,7 @@ interface GitRepoType{
 
 const checkSubdomainAvailability = async (subdomain: string): Promise<boolean> => {
   try {
-    const response = await axios.post(slugAvailablityRoute , {slug:subdomain});
+    const response = await axios.post(slugAvailablityRoute, { slug: subdomain });
     if (response.data.status) {
       return true;
     }
@@ -54,9 +55,10 @@ export default function NewProjectPage() {
   const [subdomain, setSubdomain] = useState("");
   const [subdomainError, setSubdomainError] = useState("");
   const [gitUrl, setGitUrl] = useState("");
-  // const [template, setTemplate] = useState("");
+  const [template, setTemplate] = useState("");
   const [projectName, setProjectName] = useState("");
   const [gitRepos, setGitRepos] = useState<GitRepoType[]>([]);
+  const [searchRepos, setSearchRepos] = useState<string>("");
 
   const router = useRouter();
 
@@ -86,8 +88,8 @@ export default function NewProjectPage() {
       return;
     }
     try {
-      
-      const response = await axios.post(newProjectRoute , {name:projectName , userId:user._id , slug:subdomain , gitRepoUrl:gitUrl})
+
+      const response = await axios.post(newProjectRoute, { name: projectName, userId: user._id, slug: subdomain, gitRepoUrl: gitUrl })
 
       if (response.data.status) {
         router.push(`projects/${response.data.project._id}`);
@@ -102,18 +104,19 @@ export default function NewProjectPage() {
 
   useEffect(() => {
     fetchGitRepos();
-  } , [user._id])
+  }, [user._id])
 
   async function fetchGitRepos() {
     try {
-      
-      const response = await axios.post(gitReposRoute, { userId: user._id });
-      if(response.data.status){ 
-        setGitRepos(response.data.repos);
+      if (user._id) { 
+        const response = await axios.post(gitReposRoute, { userId: user._id });
+        if (response.data.status) {
+          setGitRepos(response.data.repos);
+        }
       }
 
     } catch (error) {
-      console.log(error); 
+      console.log(error);
     }
   }
 
@@ -143,12 +146,12 @@ export default function NewProjectPage() {
                 </Link>
                 <div className="relative flex-[2]">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input className="pl-9" placeholder="Search repositories..." />
+                  <Input onChange={(e)=>{setSearchRepos(e.target.value)}} className="pl-9" placeholder="Search repositories..." />
                 </div>
               </div>
 
               <div className="space-y-4 max-h-60 overflow-y-scroll">
-                {gitRepos.map((repo) => (
+                {gitRepos.filter(x => x.full_name.toLowerCase().includes(searchRepos.toLocaleLowerCase())).map((repo) => (
                   <div
                     key={repo.name}
                     className={clsx(
@@ -180,66 +183,125 @@ export default function NewProjectPage() {
             </CardContent>
           </Card>
 
-          {/* Form Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Deploy Project</CardTitle>
-              <CardDescription>Start with a git project</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* <div>
-                <Label htmlFor="template">Select Template</Label>
-                <Select onValueChange={(val) => setTemplate(val)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choose a template" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="next">Next.js</SelectItem>
-                    <SelectItem value="react">React</SelectItem>
-                    <SelectItem value="vue">Vue</SelectItem>
-                    <SelectItem value="astro">Astro</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div> */}
+          <Tabs defaultValue="git" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-4 border border-gray-300 rounded-lg overflow-hidden">
+              <TabsTrigger
+                value="git"
+                className="data-[state=active]:bg-white data-[state=active]:text-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-100 hover:text-black transition"
+              >
+                Deploy Git Repo
+              </TabsTrigger>
+              <TabsTrigger
+                value="template"
+                className="data-[state=active]:bg-white data-[state=active]:text-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-100 hover:text-black transition"
+              >
+                Deploy Template
+              </TabsTrigger>
+            </TabsList>
 
-              <div>
-                <Label htmlFor="name">Project Name</Label>
-                <Input
-                  id="name"
-                  value={projectName}
-                  onChange={(e) => setProjectName(e.target.value)}
-                  placeholder="my-awesome-project"
-                />
-              </div>
 
-              <div>
-                <Label htmlFor="subdomain">Subdomain</Label>
-                <Input
-                  id="subdomain"
-                  value={subdomain}
-                  onChange={(e) => handleSubdomainChange(e.target.value)}
-                  placeholder="myproject"
-                />
-                {subdomainError && (
-                  <p className="text-sm text-red-500 mt-1">{subdomainError}</p>
-                )}
-              </div>
+            {/* Deploy Git Repo Tab */}
+            <TabsContent value="git">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Deploy Project</CardTitle>
+                  <CardDescription>Start with a Git project</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label htmlFor="name">Project Name</Label>
+                    <Input
+                      id="name"
+                      value={projectName}
+                      onChange={(e) => setProjectName(e.target.value)}
+                      placeholder="my-awesome-project"
+                    />
+                  </div>
 
-              <div>
-                <Label htmlFor="giturl">Git Repository URL</Label>
-                <Input
-                  id="giturl"
-                  value={gitUrl}
-                  onChange={(e) => setGitUrl(e.target.value)}
-                  placeholder="https://github.com/username/repo"
-                />
-              </div>
+                  <div>
+                    <Label htmlFor="subdomain">Subdomain</Label>
+                    <Input
+                      id="subdomain"
+                      value={subdomain}
+                      onChange={(e) => handleSubdomainChange(e.target.value)}
+                      placeholder="myproject"
+                    />
+                    {subdomainError && (
+                      <p className="text-sm text-red-500 mt-1">{subdomainError}</p>
+                    )}
+                  </div>
 
-              <Button className="w-full" onClick={handleCreateProject}>
-                Create Project
-              </Button>
-            </CardContent>
-          </Card>
+                  <div>
+                    <Label htmlFor="giturl">Git Repository URL</Label>
+                    <Input
+                      id="giturl"
+                      value={gitUrl}
+                      onChange={(e) => setGitUrl(e.target.value)}
+                      placeholder="https://github.com/username/repo"
+                    />
+                  </div>
+
+                  <Button className="w-full" onClick={handleCreateProject}>
+                    Create Project
+                  </Button>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Deploy Template Tab */}
+            <TabsContent value="template">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Deploy Template</CardTitle>
+                  <CardDescription>Start with a template project</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label htmlFor="template">Select Template</Label>
+                    <Select onValueChange={(val) => setTemplate(val)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Choose a template" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="next">Next.js</SelectItem>
+                        <SelectItem value="react">React</SelectItem>
+                        <SelectItem value="vue">Vue</SelectItem>
+                        <SelectItem value="astro">Astro</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="name">Project Name</Label>
+                    <Input
+                      id="name"
+                      value={projectName}
+                      onChange={(e) => setProjectName(e.target.value)}
+                      placeholder="my-awesome-project"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="subdomain">Subdomain</Label>
+                    <Input
+                      id="subdomain"
+                      value={subdomain}
+                      onChange={(e) => handleSubdomainChange(e.target.value)}
+                      placeholder="myproject"
+                    />
+                    {subdomainError && (
+                      <p className="text-sm text-red-500 mt-1">{subdomainError}</p>
+                    )}
+                  </div>
+
+                  <Button className="w-full" onClick={handleCreateProject}>
+                    Create Project
+                  </Button>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+
         </div>
       </div>
     </div>
