@@ -7,7 +7,7 @@ import User from "../models/User";
 const router = Router();
 
 router.post("/new", async (req, res) => {
-    const { name, userId, slug, gitRepoUrl } = req.body;
+    let { name, userId, slug, gitRepoUrl, template } = req.body;
 
     let project;
 
@@ -21,6 +21,11 @@ router.post("/new", async (req, res) => {
     }
 
     try {
+
+        if (template.toLowerCase() == "react") {
+            gitRepoUrl = "https://github.com/devanmolx/React";
+        }
+
         if (!project) {
             project = await Project.create({ name, user: userId, slug, gitRepoUrl })
         }
@@ -101,8 +106,6 @@ router.post("/", async (req, res) => {
 router.post("/gitProjects", async (req, res) => {
     const { userId } = req.body;
     try {
-
-
         const user = await User.findById(userId);
 
         if (!user) {

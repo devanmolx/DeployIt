@@ -79,7 +79,7 @@ export default function NewProjectPage() {
   };
 
   const handleCreateProject = async () => {
-    if (!gitUrl || !subdomain || !projectName) {
+    if (!subdomain || !projectName) {
       alert("Fill in all required fields.");
       return;
     }
@@ -89,7 +89,7 @@ export default function NewProjectPage() {
     }
     try {
 
-      const response = await axios.post(newProjectRoute, { name: projectName, userId: user._id, slug: subdomain, gitRepoUrl: gitUrl })
+      const response = await axios.post(newProjectRoute, { name: projectName, userId: user._id, slug: subdomain, gitRepoUrl: gitUrl , template })
 
       if (response.data.status) {
         router.push(`projects/${response.data.project._id}`);
@@ -263,10 +263,10 @@ export default function NewProjectPage() {
                         <SelectValue placeholder="Choose a template" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="next">Next.js</SelectItem>
+                        {/* <SelectItem value="next">Next.js</SelectItem> */}
                         <SelectItem value="react">React</SelectItem>
-                        <SelectItem value="vue">Vue</SelectItem>
-                        <SelectItem value="astro">Astro</SelectItem>
+                        {/* <SelectItem value="vue">Vue</SelectItem> */}
+                        {/* <SelectItem value="astro">Astro</SelectItem> */}
                       </SelectContent>
                     </Select>
                   </div>
