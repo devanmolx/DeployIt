@@ -7,7 +7,7 @@ interface StatusCardProps {
 }
 
 export function StatusCard({ project }: StatusCardProps) {
-  const latestDeployment = project.deployments[0];
+  const latestDeployment = project.deployments[project.deployments.length -1];
   
   function getStatusColor(status: string) {
     switch(status) {
