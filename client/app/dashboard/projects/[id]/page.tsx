@@ -29,6 +29,30 @@ export default function ProjectPage({ params }: ProjectPageProps) {
     fetchProject(params.id);
   }, [params.id])
 
+  useEffect(() => {
+    
+    if (!project) {
+      return;
+    }
+
+    const interval = setInterval(async () => {
+      
+      const latestDeployment = project.deployments[project.deployments.length - 1];
+
+      if (latestDeployment.status === StatusType.Deploying) {
+        await fetchProject(params.id);
+      }
+      else {
+        clearInterval(interval);
+      }
+
+    }, 10000)
+    
+    return () => clearInterval(interval); 
+
+  } , [project])
+
+
   async function fetchProject(id: string) {
     try {
       const response = await axios.post(projectRoute, { id });
