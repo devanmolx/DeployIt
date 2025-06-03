@@ -37,6 +37,23 @@ export async function GET(request: Request) {
 
     } catch (error: any) {
         console.error("S3 error:", error);
-        return NextResponse.json({ error: 'File not found' }, { status: 404 });
+
+        if (error.code === 'NoSuchKey') {
+            const fallbackKey = `project/404.html`;
+            try {
+                const fallback = await s3.getObject({ Bucket: "vercel.anmolgarg.dev", Key: fallbackKey }).promise();
+                return new NextResponse(fallback.Body as Buffer, {
+                    status: 404,
+                    headers: {
+                        'Content-Type': 'text/html',
+                    },
+                });
+            } catch {
+                return NextResponse.json({ error: 'File not found' }, { status: 404 });
+            }
+
+        }
+
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
