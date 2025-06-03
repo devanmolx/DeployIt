@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowUpRight, GitBranch, ExternalLink, Settings, Activity, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ProjectType } from "@/context/ProjectContext/ProjectContext";
-import { LogType, StatusType } from "@/context/DeploymentContext/DeploymentContext";
+import { LogType , StatusType } from "@/context/DeploymentContext/DeploymentContext";
 import axios from "axios";
 import { projectRoute } from "@/utils/routeProvider";
 import { ProjectDeployments } from "@/components/project-deployments";
@@ -28,29 +28,6 @@ export default function ProjectPage({ params }: ProjectPageProps) {
   useEffect(() => {
     fetchProject(params.id);
   }, [params.id])
-
-  useEffect(() => {
-    
-    if (!project) {
-      return;
-    }
-
-    const interval = setInterval(async () => {
-      
-      const latestDeployment = project.deployments[project.deployments.length - 1];
-
-      if (latestDeployment.status === StatusType.Deploying) {
-        await fetchProject(params.id);
-      }
-      else {
-        clearInterval(interval);
-      }
-
-    }, 2000)
-    
-    return () => clearInterval(interval); 
-
-  } , [project])
 
   async function fetchProject(id: string) {
     try {
