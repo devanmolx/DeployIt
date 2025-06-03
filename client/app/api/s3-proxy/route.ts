@@ -32,11 +32,11 @@ export async function GET(request: Request) {
             })
         }
         else {
-            return NextResponse.redirect(new URL("https://deployit.anmolgarg.tech/404"));
+            return NextResponse.json({ error: 'File not found' }, { status: 404 });
         }
 
     } catch (error: any) {
         console.error("S3 error:", error);
-        return NextResponse.redirect(new URL("https://deployit.anmolgarg.tech/404"));
+        return NextResponse.json({ error: 'File not found' }, { status: 404 });
     }
 }
