@@ -9,11 +9,14 @@ import app from "@/utils/firebase";
 import axios from "axios"
 import { loginRoute } from "@/utils/routeProvider";
 import { useRouter } from "next/navigation";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { UserContext } from "@/context/UserContext/UserContext";
 import Cookies from "js-cookie"
+import Loading from "@/components/Loading";
 
 export default function LoginPage() {
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const router = useRouter();
   const auth = getAuth(app);
@@ -31,7 +34,8 @@ export default function LoginPage() {
     const refreshToken = result.user.refreshToken;
     const credental = GithubAuthProvider.credentialFromResult(result);
     const accessToken = credental!.accessToken;
-
+    
+    setIsLoading(true);
     const response = await axios.post(loginRoute, { name, email, photoUrl, refreshToken ,accessToken })
     if (response.data.status) {
       localStorage.setItem("token", JSON.stringify(response.data.user))
@@ -40,9 +44,17 @@ export default function LoginPage() {
       router.push("/dashboard")
     }
     else {
+      setIsLoading(false);
       console.log(response.data.error)
     }
+  }
 
+  if (isLoading) {
+    return (
+      <div className=" w-screen h-screen">
+        <Loading />
+      </div>
+    )
   }
 
   return (

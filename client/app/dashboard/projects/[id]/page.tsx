@@ -44,7 +44,9 @@ export default function ProjectPage({ params }: ProjectPageProps) {
 
   if (project == undefined) {
     return (
-      <Loading />
+      <div className=" w-screen h-screen">
+        <Loading />
+      </div>
     )
   }
 

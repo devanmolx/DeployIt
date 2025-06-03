@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { DashboardNav } from "@/components/dashboard/dashboard-nav";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,19 +24,12 @@ import Link from "next/link";
 import clsx from "clsx";
 import { UserContext } from "@/context/UserContext/UserContext";
 import axios from "axios";
-import { gitReposRoute, newProjectRoute, slugAvailablityRoute } from "@/utils/routeProvider";
+import { newProjectRoute, slugAvailablityRoute } from "@/utils/routeProvider";
 import { useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
+import Loading from "@/components/Loading";
+import { GitRepoContext, GitRepoType } from "@/context/GitRepoContext/GitRepoContext";
 
-
-interface GitRepoType {
-  name: string;
-  full_name: string;
-  description: string;
-  html_url: string;
-  created_at: Date;
-  updated_at: Date;
-}
 
 const checkSubdomainAvailability = async (subdomain: string): Promise<boolean> => {
   try {
@@ -57,10 +50,13 @@ export default function NewProjectPage() {
   const [gitUrl, setGitUrl] = useState("");
   const [template, setTemplate] = useState("");
   const [projectName, setProjectName] = useState("");
-  const [gitRepos, setGitRepos] = useState<GitRepoType[]>([]);
   const [searchRepos, setSearchRepos] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const router = useRouter();
+
+  const { gitRepos } = useContext(GitRepoContext);
+  const { user } = useContext(UserContext);
 
   const handleSubdomainChange = async (value: string) => {
     setSubdomain(value);
@@ -79,6 +75,7 @@ export default function NewProjectPage() {
   };
 
   const handleCreateProject = async () => {
+    setIsLoading(true);
     if (!subdomain || !projectName) {
       alert("Fill in all required fields.");
       return;
@@ -89,35 +86,27 @@ export default function NewProjectPage() {
     }
     try {
 
-      const response = await axios.post(newProjectRoute, { name: projectName, userId: user._id, slug: subdomain, gitRepoUrl: gitUrl , template })
+      const response = await axios.post(newProjectRoute, { name: projectName, userId: user._id, slug: subdomain, gitRepoUrl: gitUrl, template })
 
       if (response.data.status) {
         router.push(`projects/${response.data.project._id}`);
       }
 
     } catch (error) {
+
       console.log(error);
+      setIsLoading(false);
+
     }
+
   };
 
-  const { user } = useContext(UserContext);
-
-  useEffect(() => {
-    fetchGitRepos();
-  }, [user._id])
-
-  async function fetchGitRepos() {
-    try {
-      if (user._id) { 
-        const response = await axios.post(gitReposRoute, { userId: user._id });
-        if (response.data.status) {
-          setGitRepos(response.data.repos);
-        }
-      }
-
-    } catch (error) {
-      console.log(error);
-    }
+  if (isLoading) {
+    return (
+      <div className=" w-screen h-screen">
+        <Loading />
+      </div>
+    )
   }
 
   return (
@@ -146,11 +135,12 @@ export default function NewProjectPage() {
                 </Link>
                 <div className="relative flex-[2]">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input onChange={(e)=>{setSearchRepos(e.target.value)}} className="pl-9" placeholder="Search repositories..." />
+                  <Input onChange={(e) => { setSearchRepos(e.target.value) }} className="pl-9" placeholder="Search repositories..." />
                 </div>
               </div>
 
               <div className="space-y-4 max-h-60 overflow-y-scroll">
+
                 {gitRepos.filter(x => x.full_name.toLowerCase().includes(searchRepos.toLocaleLowerCase())).map((repo) => (
                   <div
                     key={repo.name}
@@ -168,17 +158,14 @@ export default function NewProjectPage() {
                       <p className="text-sm text-muted-foreground mb-2">
                         {repo.description}
                       </p>
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        {/* <span>⭐ {repo.stars}</span>
-                        <span>Updated {repo.u}</span> */}
-                      </div>
                     </div>
                     <Button variant="ghost" size="sm" className="gap-2">
                       <GitBranch className="h-4 w-4" />
                       Import
                     </Button>
                   </div>
-                ))}
+                ))
+                }
               </div>
             </CardContent>
           </Card>

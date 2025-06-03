@@ -6,6 +6,7 @@ import { Analytics } from '@/components/analytics';
 import ProjectContextProvider from '@/context/ProjectContext/ProjectContextProvider';
 import UserContextProvider from '@/context/UserContext/UserContextProvider';
 import DeploymentContextProvider from '@/context/DeploymentContext/DeploymentContextProvider';
+import GitRepoContextProviser from '@/context/GitRepoContext/GitRepoContextProviser';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -26,7 +27,9 @@ export default function RootLayout({
           <UserContextProvider>
             <ProjectContextProvider>
               <DeploymentContextProvider>
-                {children}
+                <GitRepoContextProviser>
+                  {children}
+                </GitRepoContextProviser>
               </DeploymentContextProvider>
               <Analytics />
             </ProjectContextProvider>
